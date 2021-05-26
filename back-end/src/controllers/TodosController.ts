@@ -3,13 +3,22 @@ import { Request, Response } from "express";
 import { TodosService } from "../services/TodosService";
 import { User } from "../entities/User";
 
-type IFindPropsBody = {
+type IPropsBody = {
   user: User;
 };
 
+type ITodo = {
+  text?: string;
+  hasCompleted?: boolean;
+};
+
+interface ICreateProps extends IPropsBody {
+  text: string;
+}
+
 class TodosController {
   async findAllFromUser(req: Request, res: Response): Promise<Response> {
-    const { user }: IFindPropsBody = req.body;
+    const { user }: IPropsBody = req.body;
     const todosService = new TodosService();
 
     try {
@@ -21,11 +30,70 @@ class TodosController {
     }
   }
 
-  async createTodo(req: Request, res: Response) {}
+  async createTodo(req: Request, res: Response): Promise<Response> {
+    const { text, user }: ICreateProps = req.body;
+    const todosService = new TodosService();
 
-  async updateTodo(req: Request, res: Response) {}
+    try {
+      const todo = await todosService.create({ text, user_id: user.id });
 
-  async deleteTodo(req: Request, res: Response) {}
+      return res.json(todo);
+    } catch (err) {
+      return res.status(404).json(err);
+    }
+  }
+
+  async updateTodo(req: Request, res: Response): Promise<Response> {
+    const { text, hasCompleted } = req.body;
+    const { todo_id } = req.params;
+    const todosService = new TodosService();
+
+    try {
+      const todoUpdated = await todosService.update(todo_id, {
+        text,
+        hasCompleted,
+      });
+
+      if (!todoUpdated) res.status(404).json({ message: "Todo not found" });
+
+      return res.status(202).json(todoUpdated);
+    } catch (err) {
+      return res.status(404).json(err);
+    }
+  }
+
+  async deleteTodo(req: Request, res: Response): Promise<Response> {
+    const { todo_id } = req.params;
+    const todosService = new TodosService();
+
+    try {
+      const response = await todosService.delete(todo_id);
+
+      if (!response) return res.status(404).json({ message: "Todo not found" });
+
+      return res.status(200).json({ message: "Todo delete successfully" });
+    } catch (err) {
+      return res.status(404).json(err);
+    }
+  }
+
+  async deleteAll(req: Request, res: Response): Promise<Response> {
+    const { hasCompleted, user } = req.body;
+    const todosService = new TodosService();
+
+    try {
+      const response = await todosService.deleteAll(
+        user.id,
+        hasCompleted == "false" ? false : true
+      );
+
+      if (!response) return res.status(404).json({ message: "Todo not found" });
+
+      return res.status(200).json({ message: "Todos delete successfully" });
+    } catch (err) {
+      return res.status(404).json(err);
+    }
+  }
 }
 
 export { TodosController };
