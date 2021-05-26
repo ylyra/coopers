@@ -28,3 +28,5 @@ class TodosService {
 
   async delete(id: string) {}
 }
+
+export { TodosService };
