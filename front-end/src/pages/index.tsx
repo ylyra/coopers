@@ -11,6 +11,7 @@ import {
 import { Button, Link } from "react-scroll";
 
 import styles from "../styles/home.module.scss";
+import { api } from "../services/api";
 
 type ITodo = {
   id: string;
@@ -341,7 +342,9 @@ export default function Home({ isLogged }: IHomeProps) {
                 ))}
                 {provided.placeholder}
 
-                <button onClick={eraseAllRemaining}>erase all</button>
+                {todos.length > 0 && (
+                  <button onClick={eraseAllRemaining}>erase all</button>
+                )}
               </section>
             )}
           </Droppable>
@@ -386,7 +389,9 @@ export default function Home({ isLogged }: IHomeProps) {
                 ))}
                 {provided.placeholder}
 
-                <button onClick={eraseAllCompleted}>erase all</button>
+                {completedTodos.length > 0 && (
+                  <button onClick={eraseAllCompleted}>erase all</button>
+                )}
               </section>
             )}
           </Droppable>
@@ -417,7 +422,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   let isLogged = false;
   const { _coopers_user_token } = ctx.req.cookies;
 
-  if (_coopers_user_token) isLogged = true;
+  if (_coopers_user_token) {
+    const response = await api.get("/user/verify", {
+      params: {
+        token: _coopers_user_token,
+      },
+    });
+    isLogged = true;
+  }
 
   return {
     props: {

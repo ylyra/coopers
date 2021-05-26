@@ -20,7 +20,11 @@ class TodosService {
     this.todosRepository = getCustomRepository(TodosRepository);
   }
 
-  async findAllFromUser(user_id: string) {}
+  async findAllFromUser(user_id: string) {
+    const todos = await this.todosRepository.find({ user_id })
+
+    return todos;
+  }
 
   async create({ text, user_id }: ICreateTodo) {}
 

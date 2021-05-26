@@ -1,21 +1,22 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 
-const auth = (req: Request, res: Response, next: NextFunction) => {
+import { UsersService } from "../services/UsersService";
+
+const auth = async (req: Request, res: Response, next: NextFunction) => {
+  const usersService = new UsersService();
   const authHeader = req.headers.authorization;
-  const accessToken = process.env.TOKEN_SECRET;
 
   if (!authHeader)
     return res.status(401).json({ message: "No authorization header found" });
 
   const token = authHeader.split(" ")[1];
+  const userInfo = await usersService.validateToken(token);
 
-  jwt.verify(token, accessToken, (err, user) => {
-    if (err) return res.status(403).json(err);
+  if (!userInfo)
+    return res.status(401).json({ message: "Unable to validate user token" });
 
-    req.user = user;
-    next();
-  });
+  req.body.user = userInfo;
+  next();
 };
 
 export { auth };
