@@ -37,7 +37,7 @@ class TodosController {
     try {
       const todo = await todosService.create({ text, user_id: user.id });
 
-      return res.json(todo);
+      return res.status(201).json(todo);
     } catch (err) {
       return res.status(404).json(err);
     }
@@ -78,13 +78,14 @@ class TodosController {
   }
 
   async deleteAll(req: Request, res: Response): Promise<Response> {
-    const { hasCompleted, user } = req.body;
+    const { user } = req.body;
+    const { hasCompleted } = req.params;
     const todosService = new TodosService();
 
     try {
       const response = await todosService.deleteAll(
         user.id,
-        hasCompleted == "false" ? false : true
+        hasCompleted == "0" ? false : true
       );
 
       if (!response) return res.status(404).json({ message: "Todo not found" });

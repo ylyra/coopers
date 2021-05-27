@@ -1,4 +1,4 @@
-import { FormEvent, Fragment, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Head from "next/head";
@@ -8,7 +8,9 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import { Button, Link } from "react-scroll";
+import { Link } from "react-scroll";
+import Cookies from "js-cookie";
+import addHours from "date-fns/addHours";
 
 import styles from "../styles/home.module.scss";
 import { api } from "../services/api";
@@ -20,7 +22,7 @@ type ITodo = {
 };
 
 type IHomeProps = {
-  isLogged: boolean;
+  token: string;
 };
 
 type IResultMove = {
@@ -99,7 +101,8 @@ const defaultCompletedTodos = [
   },
 ];
 
-export default function Home({ isLogged }: IHomeProps) {
+export default function Home({ token }: IHomeProps) {
+  const [isLogged, setIsLogged] = useState(false);
   const [todos, setTodos] = useState<ITodo[]>(defaultTodos);
   const [completedTodos, setCompletedTodos] = useState<ITodo[]>(
     defaultCompletedTodos
@@ -108,6 +111,27 @@ export default function Home({ isLogged }: IHomeProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    async function handleVerify() {
+      try {
+        await api.post("user/verify", {
+          token: token,
+        });
+        setIsLogged(true);
+
+        api.interceptors.request.use(function (config) {
+          config.headers.Authorization = `Bearer ${token}`;
+          return config;
+        });
+
+        const { data } = await api.get("todos");
+        setTodos(data.todos);
+        setCompletedTodos(data.completedTodos);
+      } catch (err) {}
+    }
+    handleVerify();
+  }, []);
 
   function move(
     source: ITodo[],
@@ -149,49 +173,72 @@ export default function Home({ isLogged }: IHomeProps) {
     }
   }
 
-  function handleCreateNewTodo(event: FormEvent) {
+  async function handleCreateNewTodo(event: FormEvent) {
     event.preventDefault();
+
+    if (todo) {
+      try {
+        const data = {
+          text: todo,
+        };
+
+        const response = await api.post("todos/create", data);
+
+        if (response.status === 201) {
+          const newTodo = response.data;
+
+          setTodos([...todos, newTodo]);
+        }
+      } catch (err) {}
+    }
   }
 
-  function deleteTodo(todo: ITodo) {
+  async function deleteTodo(todo: ITodo) {
     let index = todos.indexOf(todo);
 
     if (index > -1) {
       const newTodos = [...todos];
       newTodos.splice(index, 1);
       setTodos(newTodos);
+
+      try {
+        await api.delete(`todos/delete/${todo.id}`);
+      } catch (err) {}
     }
   }
 
-  function deleteCompletedTodo(todo: ITodo) {
+  async function deleteCompletedTodo(todo: ITodo) {
     let index = completedTodos.indexOf(todo);
 
     if (index > -1) {
       const newcompletedTodos = [...completedTodos];
       newcompletedTodos.splice(index, 1);
       setCompletedTodos(newcompletedTodos);
+
+      try {
+        await api.delete(`todos/delete/${todo.id}`);
+      } catch (err) {}
     }
   }
 
   function handleDeleteItem(todo: ITodo) {
     deleteTodo(todo);
     deleteCompletedTodo(todo);
-
-    if (isLogged) {
-    }
   }
 
-  function eraseAllRemaining() {
+  async function eraseAllRemaining() {
     setTodos([]);
 
     if (isLogged) {
+      await api.delete("todos/deleteAll/0");
     }
   }
 
-  function eraseAllCompleted() {
+  async function eraseAllCompleted() {
     setCompletedTodos([]);
 
     if (isLogged) {
+      await api.delete("todos/deleteAll/1");
     }
   }
 
@@ -203,8 +250,36 @@ export default function Home({ isLogged }: IHomeProps) {
     setIsModalOpen(false);
   }
 
-  function handleLogin(event: FormEvent) {
+  async function handleLogin(event: FormEvent) {
     event.preventDefault();
+
+    if (email && password) {
+      try {
+        const data = {
+          email,
+          password,
+        };
+
+        const response = await api.post("user/login", data);
+
+        if (response.status === 200) {
+          setIsLogged(true);
+          const token = response.data.token;
+          api.defaults.headers.common = {
+            Authorization: `Bearer ${token}`,
+          };
+
+          Cookies.set("_coopers_user_token", token, {
+            expires: addHours(new Date(), 12),
+          });
+
+          const { data } = await api.get("todos");
+
+          setTodos(data.todos);
+          setCompletedTodos(data.completedTodos);
+        }
+      } catch (err) {}
+    }
   }
 
   return (
@@ -255,7 +330,11 @@ export default function Home({ isLogged }: IHomeProps) {
       <header className={styles.headerContainer}>
         <Image src="/logo.png" width={217} height={50} />
 
-        <button onClick={handleOpenModal}>entrar</button>
+        {isLogged ? (
+          <button>sair</button>
+        ) : (
+          <button onClick={handleOpenModal}>entrar</button>
+        )}
       </header>
 
       <section className={styles.aboutContainer}>
@@ -463,30 +542,11 @@ export default function Home({ isLogged }: IHomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  let isLogged = false;
-  let todos = {};
-  let completedTodos = {};
   const { _coopers_user_token } = ctx.req.cookies;
-
-  if (_coopers_user_token) {
-    try {
-      await api.get("/user/verify", {
-        params: {
-          token: _coopers_user_token,
-        },
-      });
-      api.defaults.headers.common = {
-        Authorization: `Bearer ${_coopers_user_token}`,
-      };
-      isLogged = true;
-    } catch (err) {}
-  }
 
   return {
     props: {
-      isLogged,
-      todos,
-      completedTodos,
+      token: _coopers_user_token,
     },
   };
 };

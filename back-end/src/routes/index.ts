@@ -12,7 +12,11 @@ routes.get("/todos", auth, todosController.findAllFromUser);
 routes.post("/todos/create", auth, todosController.createTodo);
 routes.put("/todos/update/:todo_id", auth, todosController.updateTodo);
 routes.delete("/todos/delete/:todo_id", auth, todosController.deleteTodo);
-routes.delete("/todos/deleteAll", auth, todosController.deleteAll);
+routes.delete(
+  "/todos/deleteAll/:hasCompleted",
+  auth,
+  todosController.deleteAll
+);
 
 routes.post("/user/login", usersController.findUser);
 routes.post("/user/verify", usersController.validateToken);
