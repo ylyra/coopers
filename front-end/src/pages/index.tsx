@@ -28,6 +28,7 @@ type IHomeProps = {
 type IResultMove = {
   todos: ITodo[];
   completedTodos: ITodo[];
+  movedTodo: ITodo;
 };
 
 type IMoveProps = {
@@ -35,78 +36,10 @@ type IMoveProps = {
   index: number;
 };
 
-const defaultTodos = [
-  {
-    id: "dd37f921-9122-4a5c-9f74-b2dfead7bdcd",
-    text: "Develop the To-do list page",
-    hasCompleted: false,
-  },
-  {
-    id: "0fd7f5fe-5116-46f1-b397-2d1f9ee0c5ed",
-    text: "Create the drag-and-drop function",
-    hasCompleted: false,
-  },
-  {
-    id: "57140069-f67d-4d58-8c45-669514810f8a",
-    text: "Add new tasks",
-    hasCompleted: false,
-  },
-  {
-    id: "65365e8b-bba6-47f3-b8ce-b90e5b1fe3a7",
-    text: "Delete itens",
-    hasCompleted: false,
-  },
-  {
-    id: "f7b73bfc-1f07-4756-96de-e181561a7e7f",
-    text: "Erase all",
-    hasCompleted: false,
-  },
-  {
-    id: "fb30555c-f1e6-4fc4-ad40-0c47a626e993",
-    text: "Checked item goes to Done list",
-    hasCompleted: false,
-  },
-  {
-    id: "fb30555c-f1e6-4fc4-ad40-0c47a626e993",
-    text: "This item label may be edited",
-    hasCompleted: false,
-  },
-];
-
-const defaultCompletedTodos = [
-  {
-    id: "279ace51-167f-4c81-963b-05361509138d",
-    text: "Get FTP credentials",
-    hasCompleted: false,
-  },
-  {
-    id: "30772478-c4ac-48a6-a9c0-94a34a7ba624",
-    text: "Home Page Design",
-    hasCompleted: false,
-  },
-  {
-    id: "f0b7056f-4e52-448c-bb4b-d0e9d50580b6",
-    text: "E-mail John about the deadline",
-    hasCompleted: false,
-  },
-  {
-    id: "3fa816af-b097-4bab-9104-207cbbc3c4d3",
-    text: "Create a Google Drive folder",
-    hasCompleted: false,
-  },
-  {
-    id: "5dd8f951-dd5d-475b-b289-e963d4380d8a",
-    text: "Send a gift to the client",
-    hasCompleted: false,
-  },
-];
-
 export default function Home({ token }: IHomeProps) {
   const [isLogged, setIsLogged] = useState(false);
-  const [todos, setTodos] = useState<ITodo[]>(defaultTodos);
-  const [completedTodos, setCompletedTodos] = useState<ITodo[]>(
-    defaultCompletedTodos
-  );
+  const [todos, setTodos] = useState<ITodo[]>([]);
+  const [completedTodos, setCompletedTodos] = useState<ITodo[]>([]);
   const [todo, setTodo] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -145,31 +78,38 @@ export default function Home({ token }: IHomeProps) {
 
     destClone.splice(droppableDestination.index, 0, removed);
 
-    let result: IResultMove = {
-      todos,
-      completedTodos,
-    };
+    let result: IResultMove = {} as IResultMove;
     result[droppableSource.droppableId] = sourceClone;
     result[droppableDestination.droppableId] = destClone;
+    result["movedTodo"] = removed;
 
     return result;
   }
 
-  function onDragEnd(result: DropResult) {
+  async function onDragEnd(result: DropResult) {
     const { source, destination } = result;
 
     if (!destination) return;
 
     if (source.droppableId !== destination.droppableId) {
-      const result: IResultMove = move(
-        todos,
-        completedTodos,
-        source,
-        destination
-      );
+      const from = source.droppableId === "todos" ? todos : completedTodos;
+      const to = destination.droppableId === "todos" ? todos : completedTodos;
+
+      const result: IResultMove = move(from, to, source, destination);
+
+      //console.log(result.movedTodo);
 
       setTodos([...result.todos]);
       setCompletedTodos([...result.completedTodos]);
+
+      try {
+        const hasCompleted = destination.droppableId === "todos" ? false : true;
+        const data = {
+          ...result.movedTodo,
+          hasCompleted,
+        };
+        await api.put(`todos/update/${result.movedTodo.id}`, data);
+      } catch (err) {}
     }
   }
 
@@ -416,6 +356,7 @@ export default function Home({ token }: IHomeProps) {
                       <div
                         ref={provided.innerRef}
                         className={styles.todoItem}
+                        style={provided.draggableProps.style}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
@@ -455,12 +396,17 @@ export default function Home({ token }: IHomeProps) {
                   )}
                   <strong>You have done {completedTodos.length} tasks</strong>
                 </h4>
-                {completedTodos.map((todo, index) => (
-                  <Draggable key={todo.id} draggableId={todo.id} index={index}>
+                {completedTodos.map((completedTodo, index) => (
+                  <Draggable
+                    key={completedTodo.id}
+                    draggableId={completedTodo.id}
+                    index={index}
+                  >
                     {(provided) => (
                       <div
                         ref={provided.innerRef}
                         className={styles.todoItem}
+                        style={provided.draggableProps.style}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
@@ -468,10 +414,10 @@ export default function Home({ token }: IHomeProps) {
                           <button>
                             <img src="/completed.svg" alt="Completed icon" />
                           </button>
-                          <p>{todo.text}</p>
+                          <p>{completedTodo.text}</p>
                         </div>
 
-                        <button onClick={() => handleDeleteItem(todo)}>
+                        <button onClick={() => handleDeleteItem(completedTodo)}>
                           delete
                         </button>
                       </div>
