@@ -271,6 +271,49 @@
   .todoItem > div > button {
     border-color: var(--orange-200);
   }
+
+  form {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 1.25rem;
+
+    button {
+      font-size: 0;
+      border: 0;
+      background: transparent;
+      margin-right: 0.75rem;
+    }
+
+    input {
+      border: 0;
+      font-size: 1rem;
+      outline: 0;
+      padding: 0.25rem;
+      color: var(--black);
+
+      &:focus {
+        border-bottom: 1px solid var(--primary-color);
+      }
+
+      &::-webkit-input-placeholder {
+        /* Edge */
+        color: var(--black);
+        font-weight: bold;
+      }
+
+      &:-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        color: var(--black);
+        font-weight: bold;
+      }
+
+      &::placeholder {
+        color: var(--black);
+        font-weight: bold;
+      }
+    }
+  }
 }
 
 .completedTodoContainer {
@@ -279,17 +322,6 @@
   .todoItem > div > button {
     border: 0;
     font-size: 0;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(0.5rem);
   }
 }
 
@@ -475,5 +507,16 @@
 
   .modalContent {
     justify-content: center;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(0.5rem);
   }
 }

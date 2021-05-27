@@ -188,6 +188,7 @@ export default function Home({ token }: IHomeProps) {
           const newTodo = response.data;
 
           setTodos([...todos, newTodo]);
+          setTodo("");
         }
       } catch (err) {}
     }
@@ -396,9 +397,13 @@ export default function Home({ token }: IHomeProps) {
 
                 {isLogged && (
                   <form onSubmit={handleCreateNewTodo}>
+                    <button type="submit">
+                      <img src="/check-icon.svg" alt="Check Icon" />
+                    </button>
+
                     <input
                       type="text"
-                      placeholder="start"
+                      placeholder="Add new here..."
                       value={todo}
                       onChange={(event) => setTodo(event.target.value)}
                     />
