@@ -16,6 +16,7 @@ type IUserContext = {
   handleLogin: (event: FormEvent) => Promise<void>;
   handleOpenModal: () => void;
   handleCloseModal: () => void;
+  handleLogout: () => void;
 };
 
 export const UserContext = createContext({} as IUserContext);
@@ -69,6 +70,14 @@ export function UserProvider({ children }: IUserProvider) {
     }
   }
 
+  function handleLogout() {
+    setIsLogged(false);
+    api.defaults.headers.common = {
+      Authorization: "",
+    };
+    Cookies.remove("_coopers_user_token");
+  }
+
   function handleOpenModal() {
     setIsModalOpen(true);
   }
@@ -85,6 +94,7 @@ export function UserProvider({ children }: IUserProvider) {
     handleLogin,
     handleOpenModal,
     handleCloseModal,
+    handleLogout,
   };
 
   return (

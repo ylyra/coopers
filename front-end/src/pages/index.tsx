@@ -23,7 +23,7 @@ type IHomeProps = {
 
 export default function Home({ token }: IHomeProps) {
   const { onDragEnd } = useContext(TodoContext);
-  const { isLogged, verifyLogin, handleOpenModal } = useContext(UserContext);
+  const { isLogged, verifyLogin, handleOpenModal, handleLogout } = useContext(UserContext);
 
   useEffect(() => {
     verifyLogin(token);
@@ -78,9 +78,9 @@ export default function Home({ token }: IHomeProps) {
         <Image src="/logo.png" width={217} height={50} />
 
         {isLogged ? (
-          <button>sair</button>
+          <button onClick={handleLogout}>log out</button>
         ) : (
-          <button onClick={handleOpenModal}>entrar</button>
+          <button onClick={handleOpenModal}>log in</button>
         )}
       </header>
 
