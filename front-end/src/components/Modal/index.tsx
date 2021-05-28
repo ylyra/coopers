@@ -11,7 +11,7 @@ export function Modal() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  if (!isLogged) return null;
+  if (isLogged) return null;
 
   return (
     <div className={`${styles.modal} ${isModalOpen ? styles.active : ""}`}>

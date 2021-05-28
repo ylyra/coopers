@@ -64,6 +64,9 @@ export function TodoProvider({ children }: ITodoProvider) {
           setTodos(data.todos);
           setCompletedTodos(data.completedTodos);
         } catch (err) {}
+      } else {
+        setTodos(fakeTodo);
+        setCompletedTodos(fakeCompletedTodo);
       }
     }
 

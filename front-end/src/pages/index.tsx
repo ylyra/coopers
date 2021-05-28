@@ -153,7 +153,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      token: _coopers_user_token,
+      token: _coopers_user_token || '',
     },
   };
 };
