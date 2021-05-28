@@ -1,4 +1,5 @@
-import { createContext, FormEvent, ReactNode, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
+import { FormHelpers, SubmitHandler } from "@unform/core";
 import Cookies from "js-cookie";
 import addHours from "date-fns/addHours";
 
@@ -8,12 +9,17 @@ type IUserProvider = {
   children: ReactNode;
 };
 
+type FormData = {
+  email: string;
+  password: string;
+};
+
 type IUserContext = {
   isLogged: boolean;
   isModalOpen: boolean;
 
   verifyLogin: (token: string) => Promise<void>;
-  handleLogin: (event: FormEvent) => Promise<void>;
+  handleLogin: (data: FormData, helpers: FormHelpers) => void;
   handleOpenModal: () => void;
   handleCloseModal: () => void;
   handleLogout: () => void;
@@ -25,50 +31,41 @@ export function UserProvider({ children }: IUserProvider) {
   const [isLogged, setIsLogged] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   async function verifyLogin(token: string) {
-    try {
-      await api.post("user/verify", {
-        token: token,
-      });
-      setIsLogged(true);
+    if (token) {
+      try {
+        await api.post("user/verify", {
+          token: token,
+        });
+        setIsLogged(true);
 
-      api.interceptors.request.use(function (config) {
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
-      });
-    } catch (err) {}
+        api.interceptors.request.use(function (config) {
+          config.headers.Authorization = `Bearer ${token}`;
+          return config;
+        });
+      } catch (err) {}
+    }
   }
 
-  async function handleLogin(event: FormEvent) {
-    event.preventDefault();
-
-    if (email && password) {
+  const handleLogin: SubmitHandler<FormData> = async (data, { reset }) => {
+    if (data.email && data.password) {
       try {
-        const data = {
-          email,
-          password,
-        };
-
         const response = await api.post("user/login", data);
-
         if (response.status === 200) {
           const token = response.data.token;
           api.defaults.headers.common = {
             Authorization: `Bearer ${token}`,
           };
-
           Cookies.set("_coopers_user_token", token, {
             expires: addHours(new Date(), 12),
           });
-
+          reset();
           setIsLogged(true);
         }
       } catch (err) {}
     }
-  }
+  };
 
   function handleLogout() {
     setIsLogged(false);

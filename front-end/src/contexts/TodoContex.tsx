@@ -6,12 +6,17 @@ import {
   useState,
 } from "react";
 import { DropResult } from "react-beautiful-dnd";
-import { api } from "../services/api";
+import { SubmitHandler, FormHelpers } from "@unform/core";
 
+import { api } from "../services/api";
 import { UserContext } from "./UserContext";
 
 import { fakeTodo } from "../utils/fakeTodo";
 import { fakeCompletedTodo } from "../utils/fakeCompletedTodo";
+
+type FormData = {
+  text: string;
+};
 
 type ITodoProvider = {
   children: ReactNode;
@@ -44,6 +49,7 @@ type ITodoContext = {
   handleDeleteItem: (todo: ITodo) => void;
   eraseAllRemaining: () => Promise<void>;
   eraseAllCompleted: () => Promise<void>;
+  handleCreateNewTodo: (data: FormData, helpers: FormHelpers) => void;
 };
 
 export const TodoContext = createContext({} as ITodoContext);
@@ -175,6 +181,25 @@ export function TodoProvider({ children }: ITodoProvider) {
     }
   }
 
+  const handleCreateNewTodo: SubmitHandler<FormData> = async (
+    data,
+    { reset }
+  ) => {
+    if (data.text) {
+      try {
+        const response = await api.post("todos/create", data);
+
+        if (response.status === 201) {
+          const newTodo = response.data;
+
+          updateTodos([...todos, newTodo]);
+        }
+      } catch (err) {}
+
+      reset();
+    }
+  };
+
   const valueProvider = {
     todos,
     completedTodos,
@@ -185,6 +210,7 @@ export function TodoProvider({ children }: ITodoProvider) {
     handleDeleteItem,
     eraseAllRemaining,
     eraseAllCompleted,
+    handleCreateNewTodo,
   };
 
   return (

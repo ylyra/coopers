@@ -1,5 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useRef } from "react";
+import { FormHandles } from "@unform/core";
+import { Form } from "@unform/web";
 
+import Input from "../Input";
 import { UserContext } from "../../contexts/UserContext";
 
 import styles from "./styles.module.scss";
@@ -7,9 +10,7 @@ import styles from "./styles.module.scss";
 export function Modal() {
   const { isLogged, isModalOpen, handleCloseModal, handleLogin } =
     useContext(UserContext);
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const formRef = useRef<FormHandles>(null);
 
   if (isLogged) return null;
 
@@ -27,30 +28,17 @@ export function Modal() {
             <span>to access your list</span>
           </h1>
 
-          <form onSubmit={handleLogin}>
+          <Form ref={formRef} onSubmit={handleLogin}>
             <div>
-              <label htmlFor="email">E-mail:</label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
+              <Input name="email" label="E-mail:" type="email" />
             </div>
 
             <div>
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
+              <Input name="password" label="Password:" type="password" />
             </div>
 
             <button type="submit">Sign in</button>
-          </form>
-
+          </Form>
           <button className={styles.closeModal} onClick={handleCloseModal}>
             close
           </button>

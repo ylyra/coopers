@@ -1,39 +1,21 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useRef, useState } from "react";
+import { FormHandles } from "@unform/core";
+import { Form } from "@unform/web";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import { api } from "../../services/api";
-import { TodoContext } from "../../contexts/TodoContex";
-
-import styles from "./styles.module.scss";
 import { TodoItem } from "../TodoItem";
+import Input from "../Input";
+import { TodoContext } from "../../contexts/TodoContex";
 import { UserContext } from "../../contexts/UserContext";
 
+import styles from "./styles.module.scss";
+
 export function Todos() {
-  const { todos, eraseAllRemaining, updateTodos } = useContext(TodoContext);
+  const { todos, eraseAllRemaining, handleCreateNewTodo } =
+    useContext(TodoContext);
   const { isLogged } = useContext(UserContext);
-
-  const [todo, setTodo] = useState("");
-
-  async function handleCreateNewTodo(event: FormEvent) {
-    event.preventDefault();
-
-    if (todo) {
-      try {
-        const data = {
-          text: todo,
-        };
-
-        const response = await api.post("todos/create", data);
-
-        if (response.status === 201) {
-          const newTodo = response.data;
-
-          updateTodos([...todos, newTodo]);
-          setTodo("");
-        }
-      } catch (err) {}
-    }
-  }
+  const formRef = useRef<FormHandles>(null);
 
   return (
     <section
@@ -48,18 +30,16 @@ export function Todos() {
       </h4>
 
       {isLogged && (
-        <form onSubmit={handleCreateNewTodo}>
+        <Form ref={formRef} onSubmit={handleCreateNewTodo}>
           <button type="submit">
             <img src="/check-icon.svg" alt="Check Icon" />
           </button>
+          <div>
+            <Input name="text" placeholder="Add new here..." />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Add new here..."
-            value={todo}
-            onChange={(event) => setTodo(event.target.value)}
-          />
-        </form>
+          <button type="submit">Sign in</button>
+        </Form>
       )}
 
       <Droppable droppableId="todos">
