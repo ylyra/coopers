@@ -39,3 +39,10 @@ git clone <https://github.com/ylyra/coopers>
 ```
 
 After that choose which part of the project you want to start preparing [frontend](front-end/#getting-started) or [backend](back-end/#getting-started).
+
+___
+
+## Tutorial Links
+[Tutorial for the frontend part](front-end/#getting-started)
+
+[Tutorial for the backend part](back-end/#getting-started)
