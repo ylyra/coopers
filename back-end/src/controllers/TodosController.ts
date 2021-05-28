@@ -37,6 +37,9 @@ class TodosController {
     try {
       const todo = await todosService.create({ text, user_id: user.id });
 
+      if (!todo)
+        return res.status(404).json({ message: "Unable to create the todo" });
+
       return res.status(201).json(todo);
     } catch (err) {
       return res.status(404).json(err);
@@ -88,7 +91,8 @@ class TodosController {
         hasCompleted == "0" ? false : true
       );
 
-      if (!response) return res.status(404).json({ message: "Todo not found" });
+      if (!response)
+        return res.status(404).json({ message: "Todos not found" });
 
       return res.status(200).json({ message: "Todos delete successfully" });
     } catch (err) {
