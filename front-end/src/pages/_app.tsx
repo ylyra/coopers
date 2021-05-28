@@ -1,12 +1,15 @@
 import { TodoProvider } from "../contexts/TodoContex";
+import { UserProvider } from "../contexts/UserContext";
 
 import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <TodoProvider>
-      <Component {...pageProps} />
-    </TodoProvider>
+    <UserProvider>
+      <TodoProvider>
+        <Component {...pageProps} />
+      </TodoProvider>
+    </UserProvider>
   );
 }
 
