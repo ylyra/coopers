@@ -2,15 +2,21 @@ import { useContext } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import { TodoContext } from "../../contexts/TodoContex";
+import { UserContext } from "../../contexts/UserContext";
 import { TodoItem } from "../TodoItem";
 
 import styles from "./styles.module.scss";
 
 export function CompletedTodos() {
   const { completedTodos, eraseAllCompleted } = useContext(TodoContext);
+  const { isLogged } = useContext(UserContext);
 
   return (
-    <section className={styles.completedTodoContainer}>
+    <section
+      className={`${styles.completedTodoContainer} ${
+        !isLogged ? styles.notLogged : ""
+      }`}
+    >
       <h3>Done</h3>
       <h4>
         {completedTodos.length > 0 && (

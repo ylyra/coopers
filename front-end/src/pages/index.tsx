@@ -22,8 +22,7 @@ type IHomeProps = {
 };
 
 export default function Home({ token }: IHomeProps) {
-  const { onDragEnd, updateTodos, updateCompletedTodos } =
-    useContext(TodoContext);
+  const { onDragEnd } = useContext(TodoContext);
   const { isLogged, verifyLogin, handleOpenModal } = useContext(UserContext);
 
   useEffect(() => {

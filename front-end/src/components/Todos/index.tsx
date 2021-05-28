@@ -6,11 +6,11 @@ import { TodoContext } from "../../contexts/TodoContex";
 
 import styles from "./styles.module.scss";
 import { TodoItem } from "../TodoItem";
-
-const isLogged = false;
+import { UserContext } from "../../contexts/UserContext";
 
 export function Todos() {
   const { todos, eraseAllRemaining, updateTodos } = useContext(TodoContext);
+  const { isLogged } = useContext(UserContext);
 
   const [todo, setTodo] = useState("");
 
@@ -36,7 +36,11 @@ export function Todos() {
   }
 
   return (
-    <section className={styles.todosContainer}>
+    <section
+      className={`${styles.todosContainer} ${
+        !isLogged ? styles.notLogged : ""
+      }`}
+    >
       <h3>To-do</h3>
       <h4>
         Take a breath. <br />
