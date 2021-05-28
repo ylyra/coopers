@@ -25,7 +25,7 @@ Table of Contents
 
 ## About
 
-The tutorial of each part of the project is inside the respective folder, [frontend](fron-end)
+The tutorial of each part of the project is inside the respective folder, [frontend](front-end)
 
 ## Requirements
 
@@ -38,4 +38,4 @@ To run this project you will need to install the [node](https://nodejs.org/) and
 git clone <https://github.com/ylyra/coopers>
 ```
 
-After that choose which part of the project you want to start preparing [frontend](fron-end/#getting-started) or [backend](back-end/#getting-started)
+After that choose which part of the project you want to start preparing [frontend](front-end/#getting-started) or [backend](back-end/#getting-started)
