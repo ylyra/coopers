@@ -1,8 +1,17 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { api } from "../services/api";
 
 import { UserContext } from "./UserContext";
+
+import { fakeTodo } from "../utils/fakeTodo";
+import { fakeCompletedTodo } from "../utils/fakeCompletedTodo";
 
 type ITodoProvider = {
   children: ReactNode;
@@ -41,8 +50,11 @@ export const TodoContext = createContext({} as ITodoContext);
 
 export function TodoProvider({ children }: ITodoProvider) {
   const { isLogged } = useContext(UserContext);
-  const [todos, setTodos] = useState<ITodo[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<ITodo[]>([]);
+
+  const [todos, setTodos] = useState<ITodo[]>(!isLogged ? fakeTodo : []);
+  const [completedTodos, setCompletedTodos] = useState<ITodo[]>(
+    !isLogged ? fakeCompletedTodo : []
+  );
 
   useEffect(() => {
     async function getUserTodos() {
@@ -56,7 +68,7 @@ export function TodoProvider({ children }: ITodoProvider) {
     }
 
     getUserTodos();
-  }, [isLogged])
+  }, [isLogged]);
 
   function updateTodos(todoList: ITodo[]) {
     setTodos(todoList);
