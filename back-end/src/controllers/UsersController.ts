@@ -13,12 +13,12 @@ class UsersController {
 
     const user = await usersService.findUser({ email });
 
-    if (!user) return res.status(401).json({ message: "user not found" });
+    if (!user) return res.status(401).json({ message: "User not found" });
 
     const result = await bcrypt.compare(password, user.password);
 
     if (!result)
-      return res.status(404).json({ message: "type the right password" });
+      return res.status(404).json({ message: "Type the right password" });
 
     const token = jwt.sign({ email: user.email }, tokenSecret);
 
@@ -41,11 +41,11 @@ class UsersController {
       if (!user)
         return res
           .status(401)
-          .json({ message: "unable to create a user with this e-mail" });
+          .json({ message: "Unable to create a user with this e-mail" });
 
       return res.status(201).json(user);
     } catch (err) {
-      return res.status(401).json({ message: "unable to create user" });
+      return res.status(401).json({ message: "Unable to create user" });
     }
   }
 
@@ -56,7 +56,7 @@ class UsersController {
     try {
       const user = await usersService.validateToken(token);
       if (!user)
-        return res.status(401).json({ message: "unable to validate user" });
+        return res.status(401).json({ message: "Unable to validate user" });
 
       return res.status(200).json({ isLogged: true });
     } catch (err) {
