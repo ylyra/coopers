@@ -1,0 +1,55 @@
+.todoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+
+  > div {
+    pointer-events: none;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 70%;
+
+    button {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      flex: none;
+
+      background: transparent;
+
+      &:not(.isCompleted) {
+        border: 2px solid;
+        border-color: var(--orange-200);
+      }
+
+      &.isCompleted {
+        border: 0;
+        font-size: 0;
+      }
+    }
+  }
+
+  & + .todoItem {
+    margin-top: 1.25rem;
+  }
+
+  > button {
+    background: transparent;
+    border: 0;
+    color: var(--gray-300);
+    font-family: Montserrat;
+    font-size: 0.75rem;
+    font-weight: bold;
+    opacity: 0;
+    transform: translateX(1rem);
+    transition: all 0.2s ease-in-out;
+  }
+
+  &:hover > button {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -5,12 +5,12 @@ import { api } from "../../services/api";
 import { TodoContext } from "../../contexts/TodoContex";
 
 import styles from "./styles.module.scss";
+import { TodoItem } from "../TodoItem";
 
 const isLogged = false;
 
 export function Todos() {
-  const { todos, handleDeleteItem, eraseAllRemaining, updateTodos } =
-    useContext(TodoContext);
+  const { todos, eraseAllRemaining, updateTodos } = useContext(TodoContext);
 
   const [todo, setTodo] = useState("");
 
@@ -64,22 +64,13 @@ export function Todos() {
             {todos.map((todo, index) => (
               <Draggable key={todo.id} draggableId={todo.id} index={index}>
                 {(provided) => (
-                  <div
+                  <TodoItem
                     ref={provided.innerRef}
-                    className={styles.todoItem}
-                    style={provided.draggableProps.style}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <div>
-                      <button />
-                      <p>{todo.text}</p>
-                    </div>
-
-                    <button onClick={() => handleDeleteItem(todo)}>
-                      delete
-                    </button>
-                  </div>
+                    draggableStyle={provided.draggableProps.style}
+                    draggableProps={provided.draggableProps}
+                    dragHandleProps={provided.dragHandleProps}
+                    item={todo}
+                  />
                 )}
               </Draggable>
             ))}

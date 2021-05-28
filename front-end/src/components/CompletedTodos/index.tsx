@@ -2,12 +2,12 @@ import { useContext } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 
 import { TodoContext } from "../../contexts/TodoContex";
+import { TodoItem } from "../TodoItem";
 
 import styles from "./styles.module.scss";
 
 export function CompletedTodos() {
-  const { completedTodos, handleDeleteItem, eraseAllCompleted } =
-    useContext(TodoContext);
+  const { completedTodos, eraseAllCompleted } = useContext(TodoContext);
 
   return (
     <section className={styles.completedTodoContainer}>
@@ -31,24 +31,14 @@ export function CompletedTodos() {
                 index={index}
               >
                 {(provided) => (
-                  <div
+                  <TodoItem
                     ref={provided.innerRef}
-                    className={styles.todoItem}
-                    style={provided.draggableProps.style}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <div>
-                      <button>
-                        <img src="/completed.svg" alt="Completed icon" />
-                      </button>
-                      <p>{completedTodo.text}</p>
-                    </div>
-
-                    <button onClick={() => handleDeleteItem(completedTodo)}>
-                      delete
-                    </button>
-                  </div>
+                    draggableStyle={provided.draggableProps.style}
+                    draggableProps={provided.draggableProps}
+                    dragHandleProps={provided.dragHandleProps}
+                    item={completedTodo}
+                    isCompleted
+                  />
                 )}
               </Draggable>
             ))}
