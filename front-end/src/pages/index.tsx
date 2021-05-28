@@ -1,46 +1,29 @@
-import { FormEvent, Fragment, useEffect, useState } from "react";
+import { FormEvent, Fragment, useContext, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Head from "next/head";
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext } from "react-beautiful-dnd";
 import { Link } from "react-scroll";
 import Cookies from "js-cookie";
 import addHours from "date-fns/addHours";
 
-import styles from "../styles/home.module.scss";
 import { api } from "../services/api";
+import { Todos } from "../components/Todos";
+import { CompletedTodos } from "../components/CompletedTodos";
 
-type ITodo = {
-  id: string;
-  text: string;
-  hasCompleted: boolean;
-};
+import styles from "../styles/home.module.scss";
+import { TodoContext } from "../contexts/TodoContex";
 
 type IHomeProps = {
   token: string;
 };
 
-type IResultMove = {
-  todos: ITodo[];
-  completedTodos: ITodo[];
-  movedTodo: ITodo;
-};
-
-type IMoveProps = {
-  droppableId: string;
-  index: number;
-};
-
 export default function Home({ token }: IHomeProps) {
+  const { onDragEnd, updateTodos, updateCompletedTodos } =
+    useContext(TodoContext);
+
   const [isLogged, setIsLogged] = useState(false);
-  const [todos, setTodos] = useState<ITodo[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<ITodo[]>([]);
-  const [todo, setTodo] = useState("");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,129 +42,12 @@ export default function Home({ token }: IHomeProps) {
         });
 
         const { data } = await api.get("todos");
-        setTodos(data.todos);
-        setCompletedTodos(data.completedTodos);
+        updateTodos(data.todos);
+        updateCompletedTodos(data.completedTodos);
       } catch (err) {}
     }
     handleVerify();
   }, []);
-
-  function move(
-    source: ITodo[],
-    destination: ITodo[],
-    droppableSource: IMoveProps,
-    droppableDestination: IMoveProps
-  ) {
-    const sourceClone: ITodo[] = Array.from(source);
-    const destClone: ITodo[] = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-    destClone.splice(droppableDestination.index, 0, removed);
-
-    let result: IResultMove = {} as IResultMove;
-    result[droppableSource.droppableId] = sourceClone;
-    result[droppableDestination.droppableId] = destClone;
-    result["movedTodo"] = removed;
-
-    return result;
-  }
-
-  async function onDragEnd(result: DropResult) {
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    if (source.droppableId !== destination.droppableId) {
-      const from = source.droppableId === "todos" ? todos : completedTodos;
-      const to = destination.droppableId === "todos" ? todos : completedTodos;
-
-      const result: IResultMove = move(from, to, source, destination);
-
-      //console.log(result.movedTodo);
-
-      setTodos([...result.todos]);
-      setCompletedTodos([...result.completedTodos]);
-
-      try {
-        const hasCompleted = destination.droppableId === "todos" ? false : true;
-        const data = {
-          ...result.movedTodo,
-          hasCompleted,
-        };
-        await api.put(`todos/update/${result.movedTodo.id}`, data);
-      } catch (err) {}
-    }
-  }
-
-  async function handleCreateNewTodo(event: FormEvent) {
-    event.preventDefault();
-
-    if (todo) {
-      try {
-        const data = {
-          text: todo,
-        };
-
-        const response = await api.post("todos/create", data);
-
-        if (response.status === 201) {
-          const newTodo = response.data;
-
-          setTodos([...todos, newTodo]);
-          setTodo("");
-        }
-      } catch (err) {}
-    }
-  }
-
-  async function deleteTodo(todo: ITodo) {
-    let index = todos.indexOf(todo);
-
-    if (index > -1) {
-      const newTodos = [...todos];
-      newTodos.splice(index, 1);
-      setTodos(newTodos);
-
-      try {
-        await api.delete(`todos/delete/${todo.id}`);
-      } catch (err) {}
-    }
-  }
-
-  async function deleteCompletedTodo(todo: ITodo) {
-    let index = completedTodos.indexOf(todo);
-
-    if (index > -1) {
-      const newcompletedTodos = [...completedTodos];
-      newcompletedTodos.splice(index, 1);
-      setCompletedTodos(newcompletedTodos);
-
-      try {
-        await api.delete(`todos/delete/${todo.id}`);
-      } catch (err) {}
-    }
-  }
-
-  function handleDeleteItem(todo: ITodo) {
-    deleteTodo(todo);
-    deleteCompletedTodo(todo);
-  }
-
-  async function eraseAllRemaining() {
-    setTodos([]);
-
-    if (isLogged) {
-      await api.delete("todos/deleteAll/0");
-    }
-  }
-
-  async function eraseAllCompleted() {
-    setCompletedTodos([]);
-
-    if (isLogged) {
-      await api.delete("todos/deleteAll/1");
-    }
-  }
 
   function handleOpenModal() {
     setIsModalOpen(true);
@@ -216,8 +82,8 @@ export default function Home({ token }: IHomeProps) {
 
           const { data } = await api.get("todos");
 
-          setTodos(data.todos);
-          setCompletedTodos(data.completedTodos);
+          updateTodos(data.todos);
+          updateCompletedTodos(data.completedTodos);
         }
       } catch (err) {}
     }
@@ -323,115 +189,9 @@ export default function Home({ token }: IHomeProps) {
 
       <main className={styles.mainContentContainer} id="todoList">
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="todos">
-            {(provided) => (
-              <section
-                ref={provided.innerRef}
-                className={styles.todosContainer}
-              >
-                <h3>To-do</h3>
-                <h4>
-                  Take a breath. <br />
-                  Start doing.
-                </h4>
+          <Todos />
 
-                {isLogged && (
-                  <form onSubmit={handleCreateNewTodo}>
-                    <button type="submit">
-                      <img src="/check-icon.svg" alt="Check Icon" />
-                    </button>
-
-                    <input
-                      type="text"
-                      placeholder="Add new here..."
-                      value={todo}
-                      onChange={(event) => setTodo(event.target.value)}
-                    />
-                  </form>
-                )}
-
-                {todos.map((todo, index) => (
-                  <Draggable key={todo.id} draggableId={todo.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        className={styles.todoItem}
-                        style={provided.draggableProps.style}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div>
-                          <button />
-                          <p>{todo.text}</p>
-                        </div>
-
-                        <button onClick={() => handleDeleteItem(todo)}>
-                          delete
-                        </button>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-
-                {todos.length > 0 && (
-                  <button onClick={eraseAllRemaining}>erase all</button>
-                )}
-              </section>
-            )}
-          </Droppable>
-
-          <Droppable droppableId="completedTodos">
-            {(provided) => (
-              <section
-                ref={provided.innerRef}
-                className={styles.completedTodoContainer}
-              >
-                <h3>Done</h3>
-                <h4>
-                  {completedTodos.length > 0 && (
-                    <>
-                      Congratulions! <br />
-                    </>
-                  )}
-                  <strong>You have done {completedTodos.length} tasks</strong>
-                </h4>
-                {completedTodos.map((completedTodo, index) => (
-                  <Draggable
-                    key={completedTodo.id}
-                    draggableId={completedTodo.id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        className={styles.todoItem}
-                        style={provided.draggableProps.style}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div>
-                          <button>
-                            <img src="/completed.svg" alt="Completed icon" />
-                          </button>
-                          <p>{completedTodo.text}</p>
-                        </div>
-
-                        <button onClick={() => handleDeleteItem(completedTodo)}>
-                          delete
-                        </button>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-
-                {completedTodos.length > 0 && (
-                  <button onClick={eraseAllCompleted}>erase all</button>
-                )}
-              </section>
-            )}
-          </Droppable>
+          <CompletedTodos />
         </DragDropContext>
       </main>
 

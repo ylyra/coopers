@@ -1,0 +1,99 @@
+.completedTodoContainer {
+  background: var(--white);
+  box-shadow: 0px 4px 12px rgba(66, 66, 66, 0.198454);
+  border-top: 20px solid var(--primary-color);
+
+  max-width: 380px;
+  width: 100%;
+  padding: 2.5rem 1.5rem;
+
+  h3 {
+    font-size: 2.5rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--black);
+
+    margin-bottom: 1.25rem;
+  }
+
+  h4 {
+    font-family: Montserrat;
+    font-size: 1.5rem;
+    font-weight: normal;
+    text-align: center;
+    color: var(--black);
+
+    margin-bottom: 1.875rem;
+  }
+
+  > button {
+    font-family: Poppins;
+    font-weight: 600;
+
+    background: var(--black);
+    color: var(--white);
+    border: 0;
+
+    display: block;
+    margin-top: 2.375rem;
+    padding: 1rem;
+    width: 100%;
+
+    transition: filter 0.2s ease-in-out;
+
+    &:hover {
+      text-decoration: underline;
+      filter: brightness(0.85);
+    }
+  }
+}
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+
+  > div {
+    pointer-events: none;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 70%;
+
+    button {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      flex: none;
+
+      background: transparent;
+
+      border: 0;
+      font-size: 0;
+    }
+  }
+
+  & + .todoItem {
+    margin-top: 1.25rem;
+  }
+
+  > button {
+    background: transparent;
+    border: 0;
+    color: var(--gray-300);
+    font-family: Montserrat;
+    font-size: 0.75rem;
+    font-weight: bold;
+    opacity: 0;
+    transform: translateX(1rem);
+    transition: all 0.2s ease-in-out;
+  }
+
+  &:hover > button {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
