@@ -6,31 +6,43 @@
 ================
 <!-- ts -->
   - [Table of Contents](#bookmark_tabs-table-of-contents)
-  - [About](#newspaper-about)
-  - [Requirements](#dart-requirements)
   - [Getting Started](#memo-getting-started)
-  - [Tutorial Links](#link-tutorial-links)
+  - [Backend](#backend)
+  - [Starting](#starting)
+  - [Next Step](#next-step)
 <!-- te -->
-
-## :newspaper: About
-
-The tutorial of each part of the project is inside the respective folder, [frontend](web#getting-started) and [backend](api#getting-started).
-
-## :dart: Requirements
-
-To run this project you will need to install the [node](https://nodejs.org/) and [yarn](https://yarnpkg.com/), after installing these two programs you can go to the [getting started](#getting-started) part.
 
 ## :memo: Getting Started
 
 ```bash
-# Start by cloning this project, then enter the folder that git downloaded.
-git clone https://github.com/ylyra/coopers && cd coopers
+# From the base folder enter the web folder
+cd web
+# once inside the web folder run
+yarn
+# or if you ususing npm run
+npm install
 ```
 
-After that choose which part of the project you want to start preparing [frontend](web#getting-started) or [backend](api#getting-started).
+## Backend
+
+After installing all the front-end dependencies, will need to configure the back-end dependencies, if you did that before installing the front-end, you can skip this part.
+
+## Starting
+
+To run the frontend project, inside the web folder in your prompt run
+
+```bash
+yarn dev
+# or, if you using npm
+npm run dev
+
+# after typing this command your project will start running on port :3000
+
+# to open it in your browser access http://localhost:3000
+```
 
 ___
 
-## :link: Tutorial Links
-[Tutorial for the frontend part](web#getting-started)
+## Next Step
+
 [Tutorial for the backend part](api#getting-started)
