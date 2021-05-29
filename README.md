@@ -13,7 +13,7 @@
   </a>
 </p>
 
-Table of Contents
+:bookmark_tabs: Table of Contents
 ================
 <!-- ts -->
   - [Table of Contents](#table-of-contents)
@@ -23,15 +23,15 @@ Table of Contents
   - [Tutorial Links](#tutorial-links)
 <!-- te -->
 
-## About
+## :newspaper: About
 
 The tutorial of each part of the project is inside the respective folder, [frontend](web#getting-started) and [backend](api#getting-started).
 
-## Requirements
+## :dart: Requirements
 
 To run this project you will need to install the [node](https://nodejs.org/) and [yarn](https://yarnpkg.com/), after installing these two programs you can go to the [getting started](#getting-started) part.
 
-## Getting Started
+## :memo: Getting Started
 
 ```bash
 # Start by cloning this project, then enter the folder that git downloaded.
@@ -42,6 +42,6 @@ After that choose which part of the project you want to start preparing [fronten
 
 ___
 
-## Tutorial Links
+## :link: Tutorial Links
 [Tutorial for the frontend part](web#getting-started)
 [Tutorial for the backend part](api#getting-started)
