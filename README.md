@@ -25,11 +25,11 @@
 
 ## :newspaper: About
 
-The tutorial of each part of the project is inside the respective folder, [frontend](web#getting-started) and [backend](api#getting-started).
+The tutorial of each part of the project is inside the respective folder, [frontend](web#memo-getting-started) and [backend](api#memo-getting-started).
 
 ## :dart: Requirements
 
-To run this project you will need to install the [node](https://nodejs.org/) and [yarn](https://yarnpkg.com/), after installing these two programs you can go to the [getting started](#getting-started) part.
+To run this project you will need to install the [node](https://nodejs.org/) and [yarn](https://yarnpkg.com/), after installing these two programs you can go to the [getting started](#memo-getting-started) part.
 
 ## :memo: Getting Started
 
@@ -38,11 +38,11 @@ To run this project you will need to install the [node](https://nodejs.org/) and
 git clone https://github.com/ylyra/coopers && cd coopers
 ```
 
-After that choose which part of the project you want to start preparing [frontend](web#getting-started) or [backend](api#getting-started).
+After that choose which part of the project you want to start preparing [frontend](web#memo-getting-started) or [backend](api#memo-getting-started).
 
 ___
 
 ## :link: Tutorial Links
-[Tutorial for the frontend part](web#getting-started)
+[Tutorial for the frontend part](web#memo-getting-started)
 
-[Tutorial for the backend part](api#getting-started)
+[Tutorial for the backend part](api#memo-getting-started)
