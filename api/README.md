@@ -50,6 +50,10 @@ TYPEORM_HOST =
 TYPEORM_PORT =
 TYPEORM_USERNAME = 
 TYPEORM_PASSWORD =
+
+# respectfully as created to your database
+
+# you also will need to change the TOKEN_SECRET to your own secret token.
 ```
 
 After replacing the values, you need to reconfigure the ``ormconfig.json``, first of all, change it's name to  ``ormconfig.js`` and replace the code inside to the code below:
