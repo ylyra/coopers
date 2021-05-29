@@ -5,6 +5,7 @@
   - [Getting Started](#memo-getting-started)
   - [Backend](#key-backend)
   - [Starting](#hammer-starting)
+  - [Methods](#methods)
   - [Next Step](#fast_forward-next-step)
 <!-- te -->
 
@@ -101,6 +102,32 @@ npm run dev
 # after typing this command your backend application will start running on port :3333
 
 # to open it in your browser access http://localhost:3333
+```
+
+## Methods 
+
+Here you will find all the routes for the server folder
+
+```bash
+# TO-DO ROUTES
+GET /todos
+# User needs to be logged in to have access in this route. List all todos linked to the user
+POST /todos/create
+# User needs to be logged in to have access in this route. Create a new to-do, must pass a text value in the body of the request body.
+PUT /todos/update/:todo_id
+# User needs to be logged in to have access in this route. Edit a to-do liked to the user, must pass a text and hasCompleted values inside the body of the request and the to-do id along with the url.
+DELETE /todos/delete/:todo_id
+# User needs to be logged in to have access in this route. Delete a to-do liked to the user, must pass a to-do id along with the url.
+DELETE /todos/deleteAll/:hasCompleted
+# User needs to be logged in to have access in this route. Delete a to-do liked to the user, must pass a 0 or 1 to delete. 0 being for delete all incomplete and 1 for all complete
+
+# USER routes
+POST /user/login
+# Must pass an email and password inside the request body. 
+POST /user/verify
+# Must pass an token inside the request body. 
+POST /user/create
+# Must pass an email and password inside the request body.
 ```
 ___
 
