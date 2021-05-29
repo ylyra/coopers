@@ -31,6 +31,10 @@ There is two option of how to run the typeorm, the basics that use sqlite3 as th
 yarn typeorm migration:run
 # or in case you are using npm:
 npm run typeorm migration:run
+
+# thats create a default user with 
+# email: admin@admin.com
+# password: 123
 ```
 
 It will generate the sqlite3 database inside ``src/database`` and will create some default values to each table.
@@ -75,6 +79,10 @@ After run that you are ready to the next step. Create the migrations:
 yarn typeorm migration:run
 # or in case you are using npm:
 npm run typeorm migration:run
+
+# thats create a default user with 
+# email: admin@admin.com
+# password: 123
 ```
 
 ## :hammer: Starting
