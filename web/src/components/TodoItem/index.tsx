@@ -37,12 +37,15 @@ const TodoItem = forwardRef<Ref, ITodoItem>(
     },
     ref
   ) => {
-    const { handleDeleteItem } = useContext(TodoContext);
+    const { editTodo, handleDeleteItem, createEditForm, completeTodo } =
+      useContext(TodoContext);
 
     return (
       <div
         ref={ref}
-        className={styles.todoItem}
+        className={`${styles.todoItem} ${
+          editTodo && editTodo.id === item.id ? styles.todoBeenEdited : ""
+        }`}
         style={draggableStyle}
         {...draggableProps}
         {...dragHandleProps}
@@ -53,12 +56,19 @@ const TodoItem = forwardRef<Ref, ITodoItem>(
               <img src="/completed.svg" alt="Completed icon" />
             </button>
           ) : (
-            <button />
+            <button onClick={() => completeTodo(item)} />
           )}
-          <p>{item.text}</p>
+          <div className={styles.draggableDiv}>
+            <p>{item.text}</p>
+          </div>
         </div>
 
-        <button onClick={() => handleDeleteItem(item)}>delete</button>
+        <span>
+          {!isCompleted && (
+            <button onClick={() => createEditForm(item)}>edit</button>
+          )}
+          <button onClick={() => handleDeleteItem(item)}>delete</button>
+        </span>
       </div>
     );
   }

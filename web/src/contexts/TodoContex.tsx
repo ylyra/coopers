@@ -42,6 +42,7 @@ type IMoveProps = {
 type ITodoContext = {
   todos: ITodo[];
   completedTodos: ITodo[];
+  editTodo: ITodo;
 
   updateTodos: (todoList: ITodo[]) => void;
   updateCompletedTodos: (todoList: ITodo[]) => void;
@@ -50,6 +51,9 @@ type ITodoContext = {
   eraseAllRemaining: () => Promise<void>;
   eraseAllCompleted: () => Promise<void>;
   handleCreateNewTodo: (data: FormData, helpers: FormHelpers) => void;
+  handleUpdateTodo: (data: FormData, helpers: FormHelpers) => void;
+  createEditForm: (todo: ITodo) => void;
+  completeTodo: (todo: ITodo) => Promise<void>;
 };
 
 export const TodoContext = createContext({} as ITodoContext);
@@ -61,6 +65,7 @@ export function TodoProvider({ children }: ITodoProvider) {
   const [completedTodos, setCompletedTodos] = useState<ITodo[]>(
     !isLogged ? fakeCompletedTodo : []
   );
+  const [editTodo, setEditTodo] = useState<ITodo>() 
 
   useEffect(() => {
     async function getUserTodos() {
@@ -192,7 +197,7 @@ export function TodoProvider({ children }: ITodoProvider) {
         if (response.status === 201) {
           const newTodo = response.data;
 
-          updateTodos([...todos, newTodo]);
+          setTodos([...todos, newTodo]);
         }
       } catch (err) {}
 
@@ -200,9 +205,56 @@ export function TodoProvider({ children }: ITodoProvider) {
     }
   };
 
+  const handleUpdateTodo: SubmitHandler<FormData> = async (data) => {
+      if (data.text) {
+        try {
+          const todo = {
+            ...editTodo,
+            text: data.text
+          }
+          const response = await api.put(`todos/update/${editTodo.id}`, todo);
+  
+          if (response.status === 202) {
+            const newTodo = response.data;
+            const allTodos = [...todos];
+            const todoEditedIndex = allTodos.indexOf(editTodo);
+            allTodos[todoEditedIndex] = newTodo
+
+            setTodos([...allTodos]);
+            setEditTodo(undefined as ITodo);
+          }
+        } catch (err) {}  
+      }
+    }
+
+  function createEditForm(todo: ITodo) {
+    setEditTodo(todo);
+  }
+
+  async function completeTodo(todo: ITodo) {
+    try {
+      const hasCompleted = true;
+      const data = {
+        ...todo,
+        hasCompleted,
+      };
+
+      await api.put(`todos/update/${todo.id}`, data);
+
+      const allTodos = [...todos];
+      const todoEditedIndex = allTodos.indexOf(editTodo);
+
+      allTodos.splice(todoEditedIndex, 1);
+      setTodos(allTodos);
+      setCompletedTodos([...completedTodos, todo]);
+    } catch (err) {}
+  }
+
+
   const valueProvider = {
     todos,
     completedTodos,
+    editTodo,
 
     updateTodos,
     updateCompletedTodos,
@@ -211,6 +263,9 @@ export function TodoProvider({ children }: ITodoProvider) {
     eraseAllRemaining,
     eraseAllCompleted,
     handleCreateNewTodo,
+    handleUpdateTodo,
+    createEditForm,
+    completeTodo
   };
 
   return (

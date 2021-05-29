@@ -3,13 +3,12 @@
   align-items: center;
   justify-content: space-between;
   cursor: grab;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 
   > div {
-    pointer-events: none;
-
     display: flex;
     align-items: center;
-    gap: 1rem;
     max-width: 70%;
 
     button {
@@ -17,12 +16,20 @@
       height: 24px;
       border-radius: 50%;
       flex: none;
+      margin-right: 1rem;
 
       background: transparent;
 
       &:not(.isCompleted) {
         border: 2px solid;
         border-color: var(--orange-200);
+        font-size: 0;
+
+        &:hover {
+          background: url("/check-icon.svg");
+          background-size: cover;
+          border: 0;
+        }
       }
 
       &.isCompleted {
@@ -32,11 +39,11 @@
     }
   }
 
-  & + .todoItem {
+  > div.draggableDiv & + .todoItem {
     margin-top: 1.25rem;
   }
 
-  > button {
+  > span > button {
     background: transparent;
     border: 0;
     color: var(--gray-300);
@@ -46,10 +53,19 @@
     opacity: 0;
     transform: translateX(1rem);
     transition: all 0.2s ease-in-out;
+
+    & + button {
+      margin-left: 0.5rem;
+    }
   }
 
-  &:hover > button {
+  &:hover > span > button {
     opacity: 1;
     transform: translateX(0);
+  }
+
+  &.todoBeenEdited {
+    color: var(--orange-100);
+    font-weight: 600;
   }
 }

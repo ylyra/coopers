@@ -12,10 +12,16 @@ import { UserContext } from "../../contexts/UserContext";
 import styles from "./styles.module.scss";
 
 export function Todos() {
-  const { todos, eraseAllRemaining, handleCreateNewTodo } =
-    useContext(TodoContext);
+  const {
+    todos,
+    editTodo,
+    eraseAllRemaining,
+    handleCreateNewTodo,
+    handleUpdateTodo,
+  } = useContext(TodoContext);
   const { isLogged } = useContext(UserContext);
   const formRef = useRef<FormHandles>(null);
+  const editFormRef = useRef<FormHandles>(null);
 
   return (
     <section
@@ -37,8 +43,6 @@ export function Todos() {
           <div>
             <Input name="text" placeholder="Add new here..." />
           </div>
-
-          <button type="submit">Sign in</button>
         </Form>
       )}
 
@@ -62,6 +66,26 @@ export function Todos() {
           </div>
         )}
       </Droppable>
+
+      {editTodo && (
+        <Form
+          ref={editFormRef}
+          onSubmit={handleUpdateTodo}
+          className={styles.editableTodo}
+        >
+          <button type="submit">
+            <img src="/check-icon.svg" alt="Check Icon" />
+          </button>
+          <div>
+            <Input
+              name="text"
+              defaultValue={editTodo.text}
+              placeholder="Edit todo..."
+              autoFocus
+            />
+          </div>
+        </Form>
+      )}
 
       {todos.length > 0 && (
         <button onClick={eraseAllRemaining}>erase all</button>

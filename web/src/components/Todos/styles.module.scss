@@ -130,3 +130,20 @@
     cursor: no-drop;
   }
 }
+
+.editableTodo {
+  margin-top: 1rem;
+
+  > div {
+    flex: 1;
+
+    input {
+      width: 100%;
+      font-weight: bold;
+
+      &:focus {
+        border-color: var(--orange-200);
+      }
+    }
+  }
+}
