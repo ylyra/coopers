@@ -25,7 +25,7 @@ npm install
 
 ## :key: Backend
 
-After installing all the frontend dependencies, will need to configure the [backend](https://github.com/ylyra/coopers/tree/main/api#memo-getting-started) dependencies, if you did that before installing the frontend, you can skip this part.
+After installing all the frontend dependencies, you will need to configure the [backend](https://github.com/ylyra/coopers/tree/main/api#memo-getting-started) dependencies, if you did that before installing the frontend, you can skip this part.
 
 
 ## :hammer: Starting
