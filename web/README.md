@@ -7,9 +7,9 @@
 <!-- ts -->
   - [Table of Contents](#bookmark_tabs-table-of-contents)
   - [Getting Started](#memo-getting-started)
-  - [Backend](#backend)
-  - [Starting](#starting)
-  - [Next Step](#next-step)
+  - [Backend](#key-backend)
+  - [Starting](#hammer-starting)
+  - [Next Step](#fast_forward-next-step)
 <!-- te -->
 
 ## :memo: Getting Started
@@ -23,11 +23,12 @@ yarn
 npm install
 ```
 
-## Backend
+## :key: Backend
 
-After installing all the front-end dependencies, will need to configure the back-end dependencies, if you did that before installing the front-end, you can skip this part.
+After installing all the frontend dependencies, will need to configure the [backend](https://github.com/ylyra/coopers/tree/main/api#memo-getting-started) dependencies, if you did that before installing the frontend, you can skip this part.
 
-## Starting
+
+## :hammer: Starting
 
 To run the frontend project, inside the web folder in your prompt run
 
@@ -40,9 +41,8 @@ npm run dev
 
 # to open it in your browser access http://localhost:3000
 ```
-
 ___
 
-## Next Step
+## :fast_forward: Next Step
 
-[Tutorial for the backend part](api#getting-started)
+[Tutorial for the backend part](https://github.com/ylyra/coopers/tree/main/api#memo-getting-started)
