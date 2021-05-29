@@ -25,7 +25,7 @@ Table of Contents
 
 ## About
 
-The tutorial of each part of the project is inside the respective folder, [frontend](front-end) and [backend](back-end/#getting-started).
+The tutorial of each part of the project is inside the respective folder, [frontend](web#getting-started) and [backend](api#getting-started).
 
 ## Requirements
 
@@ -38,10 +38,10 @@ To run this project you will need to install the [node](https://nodejs.org/) and
 git clone https://github.com/ylyra/coopers && cd coopers
 ```
 
-After that choose which part of the project you want to start preparing [frontend](front-end/#getting-started) or [backend](back-end/#getting-started).
+After that choose which part of the project you want to start preparing [frontend](web#getting-started) or [backend](api#getting-started).
 
 ___
 
 ## Tutorial Links
-[Tutorial for the frontend part](front-end/#getting-started)
-[Tutorial for the backend part](back-end/#getting-started)
+[Tutorial for the frontend part](web#getting-started)
+[Tutorial for the backend part](api#getting-started)
