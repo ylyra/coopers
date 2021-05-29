@@ -44,4 +44,5 @@ ___
 
 ## :link: Tutorial Links
 [Tutorial for the frontend part](web#getting-started)
+
 [Tutorial for the backend part](api#getting-started)
