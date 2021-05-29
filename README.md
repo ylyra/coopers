@@ -34,8 +34,8 @@ To run this project you will need to install the [node](https://nodejs.org/) and
 ## Getting Started
 
 ```bash
-# Start by cloning this project
-git clone <https://github.com/ylyra/coopers>
+# Start by cloning this project, then enter the folder that git downloaded.
+git clone https://github.com/ylyra/coopers && cd coopers
 ```
 
 After that choose which part of the project you want to start preparing [frontend](front-end/#getting-started) or [backend](back-end/#getting-started).
@@ -44,5 +44,4 @@ ___
 
 ## Tutorial Links
 [Tutorial for the frontend part](front-end/#getting-started)
-
 [Tutorial for the backend part](back-end/#getting-started)
