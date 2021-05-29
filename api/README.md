@@ -15,11 +15,11 @@
 ## :memo: Getting Started
 
 ```bash
-# From the base folder enter the web folder
-cd web
-# once inside the web folder run
+# From the base folder enter the api folder
+cd api
+# once inside the api folder run:
 yarn
-# or if you ususing npm run
+# or if you ususing npm run:
 npm install
 ```
 
@@ -32,17 +32,26 @@ After installing all the backend dependencies, you will need to configure the [f
 
 To run the frontend project, inside the web folder in your prompt run
 
+### Config typeorm
+
+aaa
+
+### Migrations
+
+aaaaa
+
 ```bash
 yarn dev
 # or, if you using npm
 npm run dev
 
-# after typing this command your project will start running on port :3000
+# after typing this command your project will start running on port :3333
 
-# to open it in your browser access http://localhost:3000
+# to open it in your browser access http://localhost:3333
 ```
+
 ___
 
 ## :fast_forward: Next Step
 
-[Tutorial for the backend part](https://github.com/ylyra/coopers/tree/main/api#memo-getting-started)
+[Tutorial for the frontend part](https://github.com/ylyra/coopers/tree/main/web#memo-getting-started)

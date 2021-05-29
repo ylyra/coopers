@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgur.com/JPOfn7Z.png" />
+  <img src="https://i.imgur.com/yucj0LB.png" />
 </p>
 
 :bookmark_tabs: Table of Contents
@@ -16,7 +16,7 @@
 
 ```bash
 # From the base folder enter the web folder
-cd api
+cd web
 # once inside the web folder run:
 yarn
 # or if you ususing npm run:
