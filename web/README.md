@@ -16,10 +16,10 @@
 
 ```bash
 # From the base folder enter the web folder
-cd web
-# once inside the web folder run
+cd api
+# once inside the web folder run:
 yarn
-# or if you ususing npm run
+# or if you ususing npm run:
 npm install
 ```
 
