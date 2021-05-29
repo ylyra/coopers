@@ -16,11 +16,11 @@
 :bookmark_tabs: Table of Contents
 ================
 <!-- ts -->
-  - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [Requirements](#requirements)
-  - [Getting Started](#getting-started)
-  - [Tutorial Links](#tutorial-links)
+  - [Table of Contents](#bookmark_tabs-table-of-contents)
+  - [About](#newspaper-about)
+  - [Requirements](#dart-requirements)
+  - [Getting Started](#memo-getting-started)
+  - [Tutorial Links](#link-tutorial-links)
 <!-- te -->
 
 ## :newspaper: About
