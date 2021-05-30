@@ -26,6 +26,7 @@ type ITodo = {
   id: string;
   text: string;
   hasCompleted: boolean;
+  order?:number;
 };
 
 type IResultMove = {
@@ -46,7 +47,7 @@ type ITodoContext = {
 
   updateTodos: (todoList: ITodo[]) => void;
   updateCompletedTodos: (todoList: ITodo[]) => void;
-  onDragEnd: (result: DropResult) => Promise<void>;
+  onDragEnd: (result: DropResult) => void;
   handleDeleteItem: (todo: ITodo) => void;
   eraseAllRemaining: () => Promise<void>;
   eraseAllCompleted: () => Promise<void>;
@@ -66,6 +67,7 @@ export function TodoProvider({ children }: ITodoProvider) {
     !isLogged ? fakeCompletedTodo : []
   );
   const [editTodo, setEditTodo] = useState<ITodo>();
+  const [hasReorderdLists, setHasReorderdLists] = useState(false);
 
   useEffect(() => {
     async function getUserTodos() {
@@ -83,6 +85,20 @@ export function TodoProvider({ children }: ITodoProvider) {
 
     getUserTodos();
   }, [isLogged]);
+
+  useEffect(() => {
+    async function reorderTodoLists() {
+      if (hasReorderdLists) {
+        try {
+          await api.put("todos/reorder", {
+            todos,
+            completedTodos,
+          });
+        } catch (err) {}
+      }
+    }
+    reorderTodoLists()
+  }, [todos, completedTodos])
 
   function updateTodos(todoList: ITodo[]) {
     setTodos(todoList);
@@ -110,6 +126,8 @@ export function TodoProvider({ children }: ITodoProvider) {
     const destClone: ITodo[] = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
 
+    removed.hasCompleted = droppableDestination.droppableId == "todos" ? false : true;
+
     destClone.splice(droppableDestination.index, 0, removed);
 
     let result: IResultMove = {} as IResultMove;
@@ -120,7 +138,7 @@ export function TodoProvider({ children }: ITodoProvider) {
     return result;
   }
 
-  async function onDragEnd(result: DropResult) {
+  function onDragEnd(result: DropResult) {
     const { source, destination } = result;
 
     if (!destination) return;
@@ -144,12 +162,7 @@ export function TodoProvider({ children }: ITodoProvider) {
       setCompletedTodos([...result.completedTodos]);
     }
 
-    try {
-      await api.put("todos/reorder", {
-        todos,
-        completedTodos,
-      });
-    } catch (err) {}
+    setHasReorderdLists(true);
   }
 
   async function deleteTodo(todo: ITodo) {
