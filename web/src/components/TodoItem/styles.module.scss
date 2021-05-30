@@ -73,3 +73,12 @@
     font-weight: 600;
   }
 }
+
+//
+
+@media (max-width: 1023px) {
+  .todoItem > span > button {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
