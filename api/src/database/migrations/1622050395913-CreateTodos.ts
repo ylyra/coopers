@@ -21,6 +21,11 @@ export class CreateTodos1622050395913 implements MigrationInterface {
             default: false,
           },
           {
+            name: "order",
+            type: "number",
+            isNullable: true,
+          },
+          {
             name: "user_id",
             type: "uuid",
           },

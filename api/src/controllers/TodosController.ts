@@ -47,7 +47,7 @@ class TodosController {
   }
 
   async updateTodo(req: Request, res: Response): Promise<Response> {
-    const { text, hasCompleted } = req.body;
+    const { text, hasCompleted, order } = req.body;
     const { todo_id } = req.params;
     const todosService = new TodosService();
 
@@ -55,11 +55,30 @@ class TodosController {
       const todoUpdated = await todosService.update(todo_id, {
         text,
         hasCompleted,
+        order,
       });
 
       if (!todoUpdated) res.status(404).json({ message: "Todo not found" });
 
       return res.status(202).json(todoUpdated);
+    } catch (err) {
+      return res.status(404).json(err);
+    }
+  }
+
+  async reoderTodos(req: Request, res: Response): Promise<Response> {
+    const { todos, completedTodos } = req.body;
+    const todosService = new TodosService();
+
+    if (!todos && !completedTodos)
+      return res
+        .status(404)
+        .json({ message: "Todos and completedTodos are missing" });
+
+    try {
+      await todosService.reoderTodos(todos, completedTodos);
+
+      return res.status(202).json({ message: "Todos reoderded" });
     } catch (err) {
       return res.status(404).json(err);
     }

@@ -15,6 +15,9 @@ class Todo {
   hasCompleted: boolean;
 
   @Column()
+  order: number;
+
+  @Column()
   user_id: string;
 
   @JoinColumn({ name: "user_id" })

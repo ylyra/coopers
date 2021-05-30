@@ -11,6 +11,7 @@ const todosController = new TodosController();
 routes.get("/todos", auth, todosController.findAllFromUser);
 routes.post("/todos/create", auth, todosController.createTodo);
 routes.put("/todos/update/:todo_id", auth, todosController.updateTodo);
+routes.put("/todos/reorder", auth, todosController.reoderTodos);
 routes.delete("/todos/delete/:todo_id", auth, todosController.deleteTodo);
 routes.delete(
   "/todos/deleteAll/:hasCompleted",

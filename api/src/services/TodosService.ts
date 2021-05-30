@@ -11,6 +11,7 @@ type ICreateTodo = {
 type IUpdateTodo = {
   text?: string;
   hasCompleted?: boolean;
+  order?: number;
 };
 
 class TodosService {
@@ -22,12 +23,17 @@ class TodosService {
 
   async findAllFromUser(user_id: string) {
     try {
-      const allTodos = await this.todosRepository.find({ user_id })
+      const allTodos = await this.todosRepository.find({
+        where: { user_id },
+        order: {
+          order: "ASC",
+        },
+      });
 
-      const todos = allTodos.filter(todo => !todo.hasCompleted)
-      const completedTodos = allTodos.filter(todo => todo.hasCompleted)
+      const todos = allTodos.filter((todo) => !todo.hasCompleted);
+      const completedTodos = allTodos.filter((todo) => todo.hasCompleted);
 
-      return {todos, completedTodos};
+      return { todos, completedTodos };
     } catch (err) {}
   }
 
@@ -49,8 +55,8 @@ class TodosService {
       const todoExists = await this.todosRepository.findOne({
         id,
       });
-  
-      if(todoExists) {
+
+      if (todoExists) {
         await this.todosRepository
           .createQueryBuilder()
           .update(Todo)
@@ -70,14 +76,31 @@ class TodosService {
     } catch (err) {}
   }
 
-  async delete(id: string): Promise<boolean> {
+  async reoderTodos(todos: Todo[], completedTodos: Todo[]) {
+    try {
+      todos.map(async (todo, index) => {
+        const finalTodo = todo;
+        finalTodo.order = index + 1;
 
+        await this.todosRepository.save(finalTodo);
+      });
+
+      completedTodos.map(async (todo, index) => {
+        const finalTodo = todo;
+        finalTodo.order = index + 1;
+
+        await this.todosRepository.save(finalTodo);
+      });
+    } catch (err) {}
+  }
+
+  async delete(id: string): Promise<boolean> {
     try {
       const todoExists = await this.todosRepository.findOne({
         id,
       });
-  
-      if(todoExists) {
+
+      if (todoExists) {
         await this.todosRepository
           .createQueryBuilder()
           .delete()
@@ -98,15 +121,18 @@ class TodosService {
     try {
       const todoExists = await this.todosRepository.findOne({
         hasCompleted,
-        user_id
+        user_id,
       });
-  
-      if(todoExists) {
+
+      if (todoExists) {
         await this.todosRepository
           .createQueryBuilder()
           .delete()
           .from(Todo)
-          .where("user_id = :user_id AND hasCompleted = :hasCompleted", { user_id, hasCompleted })
+          .where("user_id = :user_id AND hasCompleted = :hasCompleted", {
+            user_id,
+            hasCompleted,
+          })
           .execute();
 
         return true;
