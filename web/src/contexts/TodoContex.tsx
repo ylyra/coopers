@@ -26,7 +26,7 @@ type ITodo = {
   id: string;
   text: string;
   hasCompleted: boolean;
-  order?:number;
+  order?: number;
 };
 
 type IResultMove = {
@@ -95,10 +95,12 @@ export function TodoProvider({ children }: ITodoProvider) {
             completedTodos,
           });
         } catch (err) {}
+
+        setHasReorderdLists(false);
       }
     }
-    reorderTodoLists()
-  }, [todos, completedTodos])
+    reorderTodoLists();
+  }, [todos, completedTodos]);
 
   function updateTodos(todoList: ITodo[]) {
     setTodos(todoList);
@@ -126,7 +128,8 @@ export function TodoProvider({ children }: ITodoProvider) {
     const destClone: ITodo[] = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
 
-    removed.hasCompleted = droppableDestination.droppableId == "todos" ? false : true;
+    removed.hasCompleted =
+      droppableDestination.droppableId == "todos" ? false : true;
 
     destClone.splice(droppableDestination.index, 0, removed);
 
