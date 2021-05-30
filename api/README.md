@@ -115,7 +115,9 @@ GET /todos
 POST /todos/create
 # User needs to be logged in to have access in this route. Create a new to-do, must pass a text value in the body of the request body.
 PUT /todos/update/:todo_id
-# User needs to be logged in to have access in this route. Edit a to-do liked to the user, must pass a text and hasCompleted values inside the body of the request and the to-do id along with the url.
+# User needs to be logged in to have access in this route. Edit a to-do liked to the user, must pass a text, hasCompleted and a order values inside the body of the request and the to-do id along with the url.
+PUT /todos/reorder
+# User needs to be logged in to have access in this route. Reorder to-do lists liked to the user, must pass an todo list and an completed todo list inside the body of the request.
 DELETE /todos/delete/:todo_id
 # User needs to be logged in to have access in this route. Delete a to-do liked to the user, must pass a to-do id along with the url.
 DELETE /todos/deleteAll/:hasCompleted
