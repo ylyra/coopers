@@ -22,7 +22,7 @@ export class CreateTodos1622050395913 implements MigrationInterface {
           },
           {
             name: "order",
-            type: "number",
+            type: "integer",
             isNullable: true,
           },
           {
