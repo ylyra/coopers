@@ -65,7 +65,7 @@ export function TodoProvider({ children }: ITodoProvider) {
   const [completedTodos, setCompletedTodos] = useState<ITodo[]>(
     !isLogged ? fakeCompletedTodo : []
   );
-  const [editTodo, setEditTodo] = useState<ITodo>() 
+  const [editTodo, setEditTodo] = useState<ITodo>();
 
   useEffect(() => {
     async function getUserTodos() {
@@ -90,6 +90,14 @@ export function TodoProvider({ children }: ITodoProvider) {
 
   function updateCompletedTodos(todoList: ITodo[]) {
     setCompletedTodos(todoList);
+  }
+
+  function reorder(list: ITodo[], startIndex: number, endIndex: number) {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
   }
 
   function move(
@@ -117,24 +125,31 @@ export function TodoProvider({ children }: ITodoProvider) {
 
     if (!destination) return;
 
-    if (source.droppableId !== destination.droppableId) {
-      const from = source.droppableId === "todos" ? todos : completedTodos;
+    const from = source.droppableId === "todos" ? todos : completedTodos;
+
+    if (source.droppableId === destination.droppableId) {
+      const items = reorder(from, source.index, destination.index);
+
+      if (source.droppableId === "todos") {
+        setTodos(items);
+      } else {
+        setCompletedTodos(items);
+      }
+    } else {
       const to = destination.droppableId === "todos" ? todos : completedTodos;
 
       const result: IResultMove = move(from, to, source, destination);
 
       setTodos([...result.todos]);
       setCompletedTodos([...result.completedTodos]);
-
-      try {
-        const hasCompleted = destination.droppableId === "todos" ? false : true;
-        const data = {
-          ...result.movedTodo,
-          hasCompleted,
-        };
-        await api.put(`todos/update/${result.movedTodo.id}`, data);
-      } catch (err) {}
     }
+
+    try {
+      await api.put("todos/reorder", {
+        todos,
+        completedTodos,
+      });
+    } catch (err) {}
   }
 
   async function deleteTodo(todo: ITodo) {
@@ -206,26 +221,26 @@ export function TodoProvider({ children }: ITodoProvider) {
   };
 
   const handleUpdateTodo: SubmitHandler<FormData> = async (data) => {
-      if (data.text) {
-        try {
-          const todo = {
-            ...editTodo,
-            text: data.text
-          }
-          const response = await api.put(`todos/update/${editTodo.id}`, todo);
-  
-          if (response.status === 202) {
-            const newTodo = response.data;
-            const allTodos = [...todos];
-            const todoEditedIndex = allTodos.indexOf(editTodo);
-            allTodos[todoEditedIndex] = newTodo
+    if (data.text) {
+      try {
+        const todo = {
+          ...editTodo,
+          text: data.text,
+        };
+        const response = await api.put(`todos/update/${editTodo.id}`, todo);
 
-            setTodos([...allTodos]);
-            setEditTodo(undefined as ITodo);
-          }
-        } catch (err) {}  
-      }
+        if (response.status === 202) {
+          const newTodo = response.data;
+          const allTodos = [...todos];
+          const todoEditedIndex = allTodos.indexOf(editTodo);
+          allTodos[todoEditedIndex] = newTodo;
+
+          setTodos([...allTodos]);
+          setEditTodo(undefined as ITodo);
+        }
+      } catch (err) {}
     }
+  };
 
   function createEditForm(todo: ITodo) {
     setEditTodo(todo);
@@ -237,6 +252,7 @@ export function TodoProvider({ children }: ITodoProvider) {
       const data = {
         ...todo,
         hasCompleted,
+        order: completedTodos.length + 1,
       };
 
       await api.put(`todos/update/${todo.id}`, data);
@@ -246,10 +262,9 @@ export function TodoProvider({ children }: ITodoProvider) {
 
       allTodos.splice(todoEditedIndex, 1);
       setTodos(allTodos);
-      setCompletedTodos([...completedTodos, todo]);
+      setCompletedTodos([...completedTodos, data]);
     } catch (err) {}
   }
-
 
   const valueProvider = {
     todos,
@@ -265,7 +280,7 @@ export function TodoProvider({ children }: ITodoProvider) {
     handleCreateNewTodo,
     handleUpdateTodo,
     createEditForm,
-    completeTodo
+    completeTodo,
   };
 
   return (
