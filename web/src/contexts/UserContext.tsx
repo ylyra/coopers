@@ -22,7 +22,7 @@ type IUserContext = {
   hasErrorLogin: boolean;
 
   // Functions
-  verifyLogin: (token: string) => Promise<void>;
+  changeLoggedState: (logged: boolean) => void;
   handleLogin: (data: FormData, helpers: FormHelpers) => void;
   handleOpenModal: () => void;
   handleCloseModal: () => void;
@@ -38,20 +38,8 @@ export function UserProvider({ children }: IUserProvider) {
   const [isVerifyingLogin, setIsVerifyingLogin] = useState(false);
   const [hasErrorLogin, setHasErrorLogin] = useState(false);
 
-  async function verifyLogin(token: string) {
-    if (token) {
-      try {
-        await api.post("user/verify", {
-          token: token,
-        });
-        setIsLogged(true);
-
-        api.interceptors.request.use(function (config) {
-          config.headers.Authorization = `Bearer ${token}`;
-          return config;
-        });
-      } catch (err) {}
-    }
+  function changeLoggedState(logged: boolean = false) {
+    setIsLogged(logged);
   }
 
   const handleLogin: SubmitHandler<FormData> = async (data, { reset }) => {
@@ -101,7 +89,7 @@ export function UserProvider({ children }: IUserProvider) {
     hasErrorLogin,
 
     // Functions
-    verifyLogin,
+    changeLoggedState,
     handleLogin,
     handleOpenModal,
     handleCloseModal,

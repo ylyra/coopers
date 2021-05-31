@@ -18,15 +18,16 @@ import styles from "../styles/home.module.scss";
 import { Modal } from "../components/Modal";
 
 type IHomeProps = {
-  token: string;
+  isLoggedIn: boolean;
 };
 
-export default function Home({ token }: IHomeProps) {
+export default function Home({ isLoggedIn }: IHomeProps) {
   const { onDragEnd } = useContext(TodoContext);
-  const { isLogged, verifyLogin, handleOpenModal, handleLogout } = useContext(UserContext);
+  const { isLogged, changeLoggedState, handleOpenModal, handleLogout } =
+    useContext(UserContext);
 
   useEffect(() => {
-    verifyLogin(token);
+    changeLoggedState(isLoggedIn);
   }, []);
 
   return (
@@ -149,11 +150,21 @@ export default function Home({ token }: IHomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { _coopers_user_token } = ctx.req.cookies;
+  const { _coopers_user_token: token } = ctx.req.cookies;
+  let isLoggedIn = false;
+
+  if (token) {
+    try {
+      await api.post("user/verify", {
+        token: token,
+      });
+      isLoggedIn = true;
+    } catch (err) {}
+  }
 
   return {
     props: {
-      token: _coopers_user_token || '',
+      isLoggedIn,
     },
   };
 };
