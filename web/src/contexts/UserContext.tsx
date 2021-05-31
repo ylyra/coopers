@@ -15,9 +15,13 @@ type FormData = {
 };
 
 type IUserContext = {
+  // Booleans
   isLogged: boolean;
   isModalOpen: boolean;
+  isVerifyingLogin: boolean;
+  hasErrorLogin: boolean;
 
+  // Functions
   verifyLogin: (token: string) => Promise<void>;
   handleLogin: (data: FormData, helpers: FormHelpers) => void;
   handleOpenModal: () => void;
@@ -31,6 +35,8 @@ export function UserProvider({ children }: IUserProvider) {
   const [isLogged, setIsLogged] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVerifyingLogin, setIsVerifyingLogin] = useState(false);
+  const [hasErrorLogin, setHasErrorLogin] = useState(false);
 
   async function verifyLogin(token: string) {
     if (token) {
@@ -49,6 +55,7 @@ export function UserProvider({ children }: IUserProvider) {
   }
 
   const handleLogin: SubmitHandler<FormData> = async (data, { reset }) => {
+    setIsVerifyingLogin(true);
     if (data.email && data.password) {
       try {
         const response = await api.post("user/login", data);
@@ -63,8 +70,11 @@ export function UserProvider({ children }: IUserProvider) {
           reset();
           setIsLogged(true);
         }
-      } catch (err) {}
+      } catch (err) {
+        setHasErrorLogin(true);
+      }
     }
+    setIsVerifyingLogin(false);
   };
 
   function handleLogout() {
@@ -84,9 +94,13 @@ export function UserProvider({ children }: IUserProvider) {
   }
 
   const valueProvider = {
+    // Booelans
     isLogged,
     isModalOpen,
+    isVerifyingLogin,
+    hasErrorLogin,
 
+    // Functions
     verifyLogin,
     handleLogin,
     handleOpenModal,

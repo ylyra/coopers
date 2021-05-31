@@ -8,8 +8,14 @@ import { UserContext } from "../../contexts/UserContext";
 import styles from "./styles.module.scss";
 
 export function Modal() {
-  const { isLogged, isModalOpen, handleCloseModal, handleLogin } =
-    useContext(UserContext);
+  const {
+    isLogged,
+    isModalOpen,
+    isVerifyingLogin,
+    hasErrorLogin,
+    handleCloseModal,
+    handleLogin,
+  } = useContext(UserContext);
   const formRef = useRef<FormHandles>(null);
 
   if (isLogged) return null;
@@ -37,7 +43,15 @@ export function Modal() {
               <Input name="password" label="Password:" type="password" />
             </div>
 
-            <button type="submit">Sign in</button>
+            {hasErrorLogin && <p>E-mail e/ou senha incorretos</p>}
+
+            {isVerifyingLogin ? (
+              <button type="submit" disabled>
+                Logando...
+              </button>
+            ) : (
+              <button type="submit">Sign in</button>
+            )}
           </Form>
           <button className={styles.closeModal} onClick={handleCloseModal}>
             close
